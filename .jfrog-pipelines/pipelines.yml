@@ -1,0 +1,23 @@
+resources:
+  - name: artifact_resource
+    type: Artifact
+    configuration:                                       
+      jfrogPlatformProvider: jpdTokenIntegration    
+      repositories:                                      
+        - demo-repo-local                     
+      buildOn:
+        deployed: true
+      branches:
+        include: main
+        exclude: test
+pipelines:
+  - name: some_pipeline
+    steps:
+      - name: step_1
+        type: Bash
+        configuration:
+          inputResources:
+            - name: pipeline_trigger
+        execution:
+          onExecute:
+            - echo "artifact repo usage"
