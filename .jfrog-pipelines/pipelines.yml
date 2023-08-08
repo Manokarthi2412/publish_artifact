@@ -2,7 +2,7 @@ resources:
   - name: artifact_resource
     type: Artifact
     configuration:                                       
-      jfrogPlatformProvider: jpdTokenIntegration    
+      jfrogPlatformProvider: jfrogPlafromTokenIntegration    
       repositories:                                      
         - demo-repo-local                     
       buildOn:
