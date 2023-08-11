@@ -1,23 +1,31 @@
-resources:
-  - name: artifact_resource
-    type: Artifact
-    configuration:                                       
-      jfrogPlatformProvider: jfrogPlafromTokenIntegration    
-      repositories:                                      
-        - demo-repo-local                     
-      buildOn:
-        deployed: true
-      branches:
-        include: main
-        exclude: test
 pipelines:
-  - name: some_pipeline
+  - name: gradle_build_pipeline
     steps:
-      - name: step_1
-        type: Bash
-        configuration:
+      - name: gradle_build
+        type: Gradle
+        configuration: 
+          integrations:
+            - name: artifactory 
           inputResources:
-            - name: pipeline_trigger
-        execution:
-          onExecute:
-            - echo "artifact repo usage"
+            - name: git_repo
+          gradleCommand: build
+          gradleVersion: 6.8.3
+
+      - name: publish_build_info 
+        type: PublishBuildInfo
+        configuration:
+          artifacts:
+            - id: 'gradle_build'
+              target: 'artifactory'
+          properties:
+            - key: build.name
+              value: 'pipeline_demo'
+            - key: build.number 
+              value: '{{context.pipeline.number}}'
+          target: 'artifactory'
+          
+      - name: scan_for_vulnerabilities
+        type: XrayScan
+        configuration: 
+          buildInfoId: 'gradle_build'
+          target: 'xray'
